@@ -82,9 +82,6 @@ Proje kök dizininde `.env` dosyası oluştur:
 GEMINI_API_KEY=your_gemini_api_key_here
 HUGGINGFACE_TOKEN=your_hf_token_here
 ```
-
-> ⚠️ `.env` dosyasını asla GitHub'a göndermeyiniz!
-
 ---
 
 ## 🖥️ Kullanım
