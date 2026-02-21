@@ -110,7 +110,7 @@ def _open_first_frame(path: str) -> Image.Image:
 
 
 def _maybe_downscale(im: Image.Image, max_side: int = 2500) -> Image.Image:
-    """Downscale image if too large"""
+   
     w, h = im.size
     if max(w, h) <= max_side:
         return im
@@ -120,7 +120,7 @@ def _maybe_downscale(im: Image.Image, max_side: int = 2500) -> Image.Image:
 
 
 def image_any_to_base64(path: str) -> str:
-    """Convert any supported image format to base64 PNG"""
+    
     with _open_first_frame(path) as im:
         rgb = im.convert("RGB")
         rgb = _maybe_downscale(rgb, 2500)
@@ -241,7 +241,7 @@ def extract_evidence_from_text(text: str, doc_type: str, question: str) -> str:
     # generic fallback
     return ""
 
-# ---------- minimal PII scrub for Q&A text (optional but recommended) ----------
+
 def sanitize_text_minimal(text: str) -> str:
     if not text:
         return ""
@@ -460,9 +460,7 @@ class OCRAgent(BaseAgent):
             await self.perform_ocr(message)
 
     def _ocr_with_tesseract(self, pil_img: Image.Image, lang: str = "eng") -> Dict:
-        """
-        Enhanced Tesseract OCR with coordinate scaling
-        """
+        
         original_size = pil_img.size
         im = _prep_for_ocr(pil_img)
         processed_size = im.size
@@ -491,7 +489,6 @@ class OCRAgent(BaseAgent):
                 confs = [int(c) for c in data.get("conf", []) if str(c) not in ("-1", "")]
                 avg_conf = (sum(confs) / len(confs) / 100.0) if confs else 0.0
 
-                #  Quality check - reject gibberish
                 readable_ratio = len([c for c in txt if c.isalnum() or c.isspace()]) / max(1, len(txt))
                 
                 # Sadece okunabilirlik oranı %70'in üzerindeyse ve mevcut en iyi metin/güvenilirlik oranını aşıyorsa kabul et
@@ -606,7 +603,6 @@ logger = logging.getLogger(__name__)
 
 class HybridPIIMaskingAgent(BaseAgent):
     """
-    v6.0 — Policy-Based PII Masker (HF model + regex, doc_type-aware, A2A uyumlu)
 
     - DocumentClassifierAgent'tan gelen `document_type` kullanılır.
     - Kritik PII:
@@ -687,7 +683,6 @@ class HybridPIIMaskingAgent(BaseAgent):
             "correspondent", "sources", "witnesses", "authorities",
         }
 
-        #  FIX 3: Receipt-specific business info (mask YAPMA)
         self.receipt_business_keywords = [
             r"\bmerchant\b", r"\bterminal\b", r"\bauth(orization)?\s*code\b",
             r"\bapproval\b", r"\bcashier\b", r"\bserver\b", r"\btable\b",
@@ -695,7 +690,7 @@ class HybridPIIMaskingAgent(BaseAgent):
         ]
         self.re_receipt_business = [re.compile(p, re.I) for p in self.receipt_business_keywords]
 
-        # --------- REGEXLER (yüksek güven) ----------
+        # --------- REGEXLER ----------
         self.re_iban = re.compile(
             r"(?i)\biban[:\s,]*([a-z0-9]{2}\d{2}[a-z0-9]{10,30})\b"
         )
@@ -1171,7 +1166,6 @@ class HybridPIIMaskingAgent(BaseAgent):
     
             logger.info(f"     ink={ink_density:.4f}, edge={edge_density:.4f}")
     
-    #  KARAR - DAHA DÜŞÜK EŞİKLER (sadece imza alanı için)
             MIN_INK = 0.015
             MIN_EDGE = 0.012
     
@@ -1249,7 +1243,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                             right_ink, right_edge, right_hand = analyze_signature_region(right_region, keywords, ocr_boxes)
                             below_ink, below_edge, below_hand = analyze_signature_region(below_region, keywords, ocr_boxes)
                         
-                        #  YENİ ESNEK KONTROL
+
                             if right_hand and (right_ink > 0.01 or right_edge > 0.005):
                                 found_regions.append(right_region)
                                 logger.info(f"   Signature FOUND to RIGHT")
@@ -1286,7 +1280,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                         base_region = (max(0, x - 50), y + h + 5, min(280, iw - x + 50), 85)
                         ink, edge, is_handwritten = analyze_signature_region(base_region, keywords, ocr_boxes)
                     
-                    #  YENİ ESNEK KONTROL
+
                         if is_handwritten and (ink > 0.01 or edge > 0.005):
                             found_regions.append(base_region)
                             logger.info(f"   Signature FOUND below")
@@ -1299,7 +1293,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                         right_ink, right_edge, right_hand = analyze_signature_region(right_region, keywords, ocr_boxes)
                         below_ink, below_edge, below_hand = analyze_signature_region(below_region, keywords, ocr_boxes)
                     
-                    #  YENİ ESNEK KONTROL
+
                         if right_hand and (right_ink > 0.01 or right_edge > 0.005):
                             found_regions.append(right_region)
                             logger.info(f"   Signature FOUND to RIGHT")
@@ -1942,7 +1936,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                         break
 
                 # X-KOORDINAT KONTROLÜ: Client label ile aynı sütun tarafında mı?
-                # Tolerans: ±120 piksel (Shelton LLC gibi biraz içeriden başlayanlar için geniş tuttuk)
                     x_diff = abs(next_x - label_x)
                     if x_diff > 120:
                         logger.info(f"     Skipped (wrong X): '{next_text}' (X={next_x}, diff={x_diff})")
@@ -2007,7 +2000,6 @@ class HybridPIIMaskingAgent(BaseAgent):
 
                 address_boxes = []
 
-            # 1) Tek kutu içinde "Address: 89-B Farwell..." durumu
                 if inline_match:
                 # Bu kutunun tamamını adres olarak kabul et (label + value birlikte)
                     address_boxes.append(box)
@@ -2029,7 +2021,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                             address_boxes.append(b2)
                             logger.info(f"      + Same-line address part: '{t2}'")
 
-            # Eğer aynı satırda adres yakalandıysa, BU KADAR YETER:
+            # Eğer aynı satırda adres yakalandıysa
             # Alt satırlara inmeye gerek yok (doğum tarihine karışmaması için)
                 if address_boxes:
                     all_x = [b.get("box", (0, 0, 0, 0))[0] for b in address_boxes]
@@ -2059,7 +2051,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                     return address_regions
 
             # 3) Alt satırlardaki devam eden adres satırları (posta kodu vb.)
-            #    (şu anki mantığını koruyoruz ama bazı label'larda durduruyoruz)
                 for j in range(i + 1, min(i + 6, len(sorted_boxes))):
                     next_box = sorted_boxes[j]
                     nx, ny, nw, nh = next_box.get("box", (0, 0, 0, 0))
@@ -2070,7 +2061,6 @@ class HybridPIIMaskingAgent(BaseAgent):
 
                     lower_next = next_text.lower()
 
-                # Çok aşağıya indiysen kır
                     if ny - y > h * 4:
                         break
 
@@ -2110,7 +2100,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                     address_boxes.append(next_box)
                     logger.info(f"      + Added below-line address part: '{next_text}'")
 
-                # Genelde 2–3 satır adres yeterli
                     if len(address_boxes) >= 3:
                         break
 
@@ -2153,7 +2142,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                 if not text:
                     continue
             
-            # Geliştirilmiş pattern: sayı VEYA kelime + street/drive/road
                 flexible_address = re.search(
                     r"\b(\d+\s+)?[A-Z][a-z]+(\s+[A-Z][a-z]+)?\s+(street|st\.|avenue|ave\.|road|rd\.|drive|dr\.|lane|ln\.|way|boulevard|blvd\.)\b",
                     text,
@@ -2165,8 +2153,7 @@ class HybridPIIMaskingAgent(BaseAgent):
             
                 logger.info(f"   Address pattern found: '{text}'")
             
-            #  SMART Context Filtering
-            # Yakın context (±2 satır) - aynı paragraf
+
                 close_context_window = 2
                 close_context_texts = []
                 for j in range(max(0, i - close_context_window), min(len(sorted_boxes), i + close_context_window + 1)):
@@ -2345,7 +2332,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                     logger.info(f" RESUME NAME via NAME label detected: '{combined_name}' → bbox=({mx},{my},{mw},{mh})")
                     return [(mx, my, mw, mh)]
 
-        #  2️ AYNI SATIRDA YOKSA ALT SATIRA BAK (FIX: 1-3 satır altı, aynı sütun)
+        #  2️ AYNI SATIRDA YOKSA ALT SATIRA BAK 
             below_candidates = []
             for k, b2 in enumerate(sorted_boxes):
                 if k <= i:  # Label'dan sonra gelen kutuları kontrol et
@@ -2415,7 +2402,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                 "box": (mx, my, mw, mh),
             })
 
-    # Bundan sonra name detection merged top_boxes üzerinden yapılacak
+
         top_boxes = merged_top_boxes
 
     # Yükseklikleri tekrar hesapla
@@ -2442,7 +2429,7 @@ class HybridPIIMaskingAgent(BaseAgent):
             if b.get("box", (0,0,0,0))[3] > avg_height * 1.3
         ]
     
-    # 3️ ALTI ÇİZİLİ METINLER (underline tespiti)
+    # 3️ ALTI ÇİZİLİ METINLER
     # Altı çizili metin genelde hemen altında ince bir çizgi kutusu vardır
         underlined = []
         for i, box in enumerate(top_boxes):
@@ -2460,8 +2447,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                     logger.info(f"    Underlined detected: '{box.get('text')}'")
     
     # === ADAY HAVUZU ===
-            # === ADAY HAVUZU ===
-    # Dict'ler set'e girmez; kendimiz dedup yapıyoruz
+
             candidates = []
             seen = set()
 
@@ -2477,7 +2463,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                 candidates.append(b)
 
             if not candidates:
-        # Son çare: İlk 5 kutuya bak
                 candidates = top_boxes[:5]
 
     # === FİLTRELEME ===
@@ -2539,17 +2524,14 @@ class HybridPIIMaskingAgent(BaseAgent):
         
         # 5️ İSİM PATTERN KONTROLÜ
         
-        # Pattern A: Title Case (George Anthony Santisteban)
+
             title_case_count = sum(1 for w in words if len(w) > 1 and w[0].isupper())
             is_title_case = title_case_count >= 2
         
-        # Pattern B: ALL CAPS (RANDALL EDWARD HARRIS)
             is_all_caps = text.isupper() and word_count >= 2 and word_count <= 4
         
-        # Pattern C: Last, First format (DAENENS, Paul, J.A.)
             has_comma = "," in text
         
-        # Pattern D: Unvan ile (H. RUSSELL FISHER, M.D.)
             has_title = bool(re.search(r"\b(ph\.?\s*d\.?|m\.?d\.?|ph\.?d\.?|dr\.?|prof\.?)\b", text_lower))
         
         # En az bir pattern'e uymalı
@@ -2753,10 +2735,8 @@ class HybridPIIMaskingAgent(BaseAgent):
                 return not (x + w < sx or sx + sw < x or y + h < sy or sy + sh < y)
 
 
-            # OpenCV imzalarını ekle (letter için özel mantık)
             if opencv_sigs:
                if dt == "letter":
-            # Letter: OpenCV zaten sadece "Sincerely altı" için filtrelendi
                   for s in opencv_sigs:
                       final_sig_boxes.append(s["box"])
                else:
@@ -2769,7 +2749,6 @@ class HybridPIIMaskingAgent(BaseAgent):
                     # OCR yoksa hepsini al
                         final_sig_boxes.extend([s["box"] for s in opencv_sigs])
 
-            # OCR bölgelerinden, henüz OpenCV ile kapsanmamış olanları ekle
             for r in sig_regions:
                 if not any(overlaps(r, fb) for fb in final_sig_boxes):
                     final_sig_boxes.append(r)
@@ -2956,7 +2935,6 @@ class ClassificationAgent(BaseAgent):
             device=0 if torch.cuda.is_available() else -1
         )
 
-        # IMPROVED: Extended label map
         self.label_map_en = {
             "invoice": "invoice",
             "bill": "invoice",
@@ -2982,7 +2960,6 @@ class ClassificationAgent(BaseAgent):
         self.candidate_labels_en = list(self.label_map_en.keys())
         self.hypothesis_template_en = "This text is about {}."
 
-        # IMPROVED: Extended keyword map (especially for resume and email)
         self.keyword_map_en = {
             "invoice": ["invoice", "bill", "vat", "tax", "amount due", "payment terms", "subtotal", "total amount"],
             "receipt": ["receipt", "payment", "transaction", "paid", "total", "thank you for your purchase"],
@@ -3016,7 +2993,6 @@ class ClassificationAgent(BaseAgent):
             ]
         }
 
-        # IMPROVED: News article keywords expanded
         self.news_keywords = [
             "reported", "according to", "sources say", "officials said",
             "announced", "confirmed", "stated", "spokesperson", "breaking news",
@@ -3027,7 +3003,6 @@ class ClassificationAgent(BaseAgent):
             "officials confirmed", "newspaper", "wire service", "dateline"
         ]
 
-        #  YENİ: Newspaper-specific patterns (IMPROVED)
         self.newspaper_indicators = [
             r"\b(associated press|reuters|ap|upi)\b",  # Wire services
             r"\b(reported|according to|officials said|spokesperson)\b",  # News language
@@ -3035,14 +3010,12 @@ class ClassificationAgent(BaseAgent):
             r"^\s*by\s+[A-Z][a-z]+\s+[A-Z][a-z]+\s*$",  # Byline pattern
         ]
 
-        #  YENİ: Dateline patterns (CITY — Text)
         self.re_dateline = re.compile(
             r"^[A-Z][A-Z\s]{2,20}(?:\([A-Z]+\))?\s*[—–-]\s*",
             re.MULTILINE
         )
 
 
-        # Email header regexes
         self.email_header_re = [
             re.compile(r"^from\s*:", re.I | re.M),
             re.compile(r"^to\s*:", re.I | re.M),
@@ -3058,7 +3031,6 @@ class ClassificationAgent(BaseAgent):
             re.compile(r"^on .+\b(wrote|said)\s*:", re.I | re.M),
         ]
         
-        # Count ANY email-like headers (core + cc/bcc + minor)
         self.any_email_hdr_patterns = [
             re.compile(r"^from\s*:", re.I|re.M),
             re.compile(r"^to\s*:", re.I|re.M),
@@ -3094,7 +3066,6 @@ class ClassificationAgent(BaseAgent):
             re.compile(r"\bmm\b|\bml\b|\bno\.\b", re.I),
         ]
 
-        # Receipt vs Invoice patterns
         self.receipt_kw = [
             r"\breceipt\b", r"\bterminal\b", r"\bmerchant\b", r"\bcashier\b", r"\bauth(ori[sz]ation)?\s*code\b",
             r"\b(card|visa|mastercard|amex|debit|credit)\b", r"\bapproved\b", r"\btender\b",
@@ -3131,7 +3102,6 @@ class ClassificationAgent(BaseAgent):
         )
         self.re_money = re.compile(r"(?:[$€£])?\s?\b\d{1,4}[.,]\d{2}\b")
 
-        # Form layout helpers
         self.re_label_line = re.compile(r"^[A-Z][A-Z0-9 ,/()\-]{2,30}\s*:\s*$", re.M)
         self.form_kw_headers = [
             "group no", "% solution", "dosage", "results", "signature", "signature(s)",
@@ -3141,7 +3111,6 @@ class ClassificationAgent(BaseAgent):
         ]
         self.re_allcaps_line = re.compile(r"^[A-Z0-9 ,()/\-]{10,}$")
         
-        # New for Form Veto
         self.lab_form_cues = [
             "compound code", "molecular weight", "solubility", "reactivity",
             "storage recommendations", "safety comments", "handling procedure",
@@ -3156,7 +3125,6 @@ class ClassificationAgent(BaseAgent):
             re.compile(r"\brequest made by\b", re.I),
         ]
 
-        # LETTER patterns
         self.letter_salutations = [
             r"^dear\s+(sir|madam|mr|ms|mrs|dr|[a-z][\w\-']+)\b",
         ]
@@ -3176,13 +3144,11 @@ class ClassificationAgent(BaseAgent):
         )
         self.re_letter_subject = re.compile(r"^(re|subject)\s*:\s+\S+", re.I | re.M)
 
-        # NEWS ARTICLE patterns
         self.re_news_byline  = re.compile(r"^\s*by\s+[A-Z][a-z]+(?:\s+[A-Z]\.)?(?:\s+[A-Z][a-z]+)+\b", re.I|re.M)
         self.re_news_dateline = re.compile(r"^[A-Z][A-Za-z .'-]{2,40}\s[-–—]\s", re.M)
         self.re_news_month  = re.compile(r"\b(january|february|march|april|may|june|july|august|september|october|november|december|"
                                              r"jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\b", re.I)
         self.re_news_head_allcaps = re.compile(r"^(?:[A-Z0-9][A-Z0-9'&,-]{2,}\s+){2,12}[A-Z0-9'&,-]{2,}$")
-        # News publisher regex expanded
         self.re_news_pubwords = re.compile(
             r"(associated press|reuters|ap news|upi|newswire|bloomberg|financial times|the times|"
             r"new york times|washington post|wall street journal|guardian|gazette|journal|tribune|post|herald|"
@@ -3191,7 +3157,6 @@ class ClassificationAgent(BaseAgent):
         )
         self.re_news_pagenote = re.compile(r"\bpage\s+\d+\b", re.I)
         
-        # New for News Veto
         self.re_frontpage_cues = re.compile(
             r"\bvol\.\s*[A-Z0-9]+\b|\bno\.\s*\d{1,6}\b|\b(late edition|final edition|early edition)\b|"
             r"\b(all the news|that's fit to print)\b|\bnew york\b.*\b[0-9]{4}\b",
@@ -3201,13 +3166,11 @@ class ClassificationAgent(BaseAgent):
             r"\$\s?\d+(\.\d{2})?\b", re.I
         )
         
-        # New for Email FIX 2
         self.re_corporate_path_email = re.compile(
             r"[A-Za-z]+/[A-Za-z]+/[A-Z]{2,}@[A-Z]{2,}",  # Example: Jordan Bressler/Lorillard/MLBA@MLBA
             re.I
         )
-        
-        # New for Invoice FIX 3
+
         self.re_b2b_email = re.compile(
             r"(accountspayable|accounts\s*payable|invoices?|billing|ar\b|ap\b)@",
             re.I
@@ -3225,7 +3188,6 @@ class ClassificationAgent(BaseAgent):
             await self.classify_document(message)
 
     def _make_sample(self, text: str, chunk: int = 600) -> str:
-        """IMPROVED: Longer sample (400 -> 600)"""
         text = (text or "").strip()
         if len(text) <= chunk * 3:
             return text
@@ -3233,17 +3195,14 @@ class ClassificationAgent(BaseAgent):
         return " ".join([text[:chunk], text[max(0, mid - chunk // 2):mid + chunk // 2], text[-chunk:]])
 
     def _keyword_hint(self, text: str) -> Optional[str]:
-        """IMPROVED: Smarter keyword scoring"""
         t = (text or "").lower()
         scores = {dt: sum(1 for kw in kws if kw in t) for dt, kws in self.keyword_map_en.items()}
         
-        # Additional check for Email: +2 points if email address exists
         if self._has_email_address(t):
             scores["email"] = scores.get("email", 0) + 2
         
         best_dt, best_hits = max(scores.items(), key=lambda x: x[1])
         
-        # At least 2 hits are generally needed, but 1 is okay if it dominates others
         second_best = sorted(scores.values(), reverse=True)[1] if len(scores) > 1 else 0
         
         if best_hits >= 3:
@@ -3251,13 +3210,12 @@ class ClassificationAgent(BaseAgent):
         elif best_hits >= 2:
             return best_dt
         elif best_hits == 1 and second_best == 0:
-            return best_dt  # Single hit, but no other category matches
+            return best_dt 
         
         return None
 
     def _count_email_headers(self, raw_text: str) -> int:
         t = raw_text or ""
-        # Count only core email headers: from, to, subject, date
         core_headers = [
             re.compile(r"^from\s*:", re.I | re.M),
             re.compile(r"^to\s*:", re.I | re.M),
@@ -3271,7 +3229,6 @@ class ClassificationAgent(BaseAgent):
         block = "\n".join(lines)
         return sum(1 for p in self.any_email_hdr_patterns if p.search(block))
     
-    # NEW HELPER
     def _has_email_thread_artifacts(self, raw_text: str) -> bool:
         t = raw_text or ""
         patterns = [
@@ -3284,9 +3241,7 @@ class ClassificationAgent(BaseAgent):
         ]
         return any(p.search(t) for p in patterns)
     
-    # NEW HELPER
     def _is_lab_form_like(self, raw_text: str, norm_text: str) -> bool:
-        """Technical/Lab/Spec sheet form detection (0000989556.png, 00837285.png)"""
         t = (raw_text + "\n" + norm_text).lower()
         
         hits = sum(1 for kw in self.lab_form_cues if kw in t)
@@ -3296,9 +3251,7 @@ class ClassificationAgent(BaseAgent):
         
         return (hits >= 4) or (hits >= 2 and has_spec_numbers and has_approval_block)
 
-    # NEW HELPER
     def _is_newspaper_frontpage_like(self, raw_text: str, norm_text: str) -> bool:
-        """Strong newspaper front-page detection (07STATE-tear-articleLarge.webp)"""
         t = (raw_text or "").lower()
         raw = raw_text or ""
         top_lines = "\n".join(raw.splitlines()[:15])
@@ -3306,43 +3259,32 @@ class ClassificationAgent(BaseAgent):
         cues = 0
         if self.re_frontpage_cues.search(top_lines): cues += 2
         
-        # Check for day of week + price (common masthead)
         if self.re_frontpage_price.search(top_lines) and re.search(r"\b(tuesday|wednesday|thursday|friday|saturday|sunday|monday)\b", t):
             cues += 1
             
-        if re.search(r"\bshutdown ends\b", t) or re.search(r"\bover dreamers\b", t): cues += 1  # big political headline style (specific dataset example)
+        if re.search(r"\bshutdown ends\b", t) or re.search(r"\bover dreamers\b", t): cues += 1 
         
-        # Columnar layout hint: many short, long lines followed by many columns (news layout)
         lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
         if len(lines) > 50 and sum(1 for ln in lines if 20 <= len(ln) <= 50) >= 30:
              cues += 1
         
         return cues >= 3
 
-    # NEW HELPER (FIX 2: Email -> Letter)
     def _looks_like_informal_email_body(self, raw_text: str) -> bool:
-        """
-        Capture internal / legacy corporate emails that read like: 
-        name lines + timestamp + 'Subject ...' + conversational language,
-        but without nice RFC headers.
-        """
+
         t = (raw_text or "").lower()
         top_block = "\n".join((raw_text or "").splitlines()[:40]).lower()
         
-        # Must have 'subject' in first ~40 lines even if no colon
         has_subjectish = re.search(r"\bsubject\b", top_block)
 
-        # Must have a timestamp-ish line near top
         has_timestamp = re.search(
             r"\b(0?[1-9]|1[0-2]):[0-5]\d\s*(am|pm)\b", top_block
         ) or re.search(
             r"\b(20|19)\d{2}\b", top_block
         )
         
-        #  YENİ: Corporate path-style emails (Jordan Bressler/Lorillard/MLBA@MLBA)
         has_corporate_path = bool(self.re_corporate_path_email.search(raw_text))
 
-        # Must sound conversational / forwarding-ish, not formal letter
         convo_bits = (
             "thought i'd" in t or
             "thought'd" in t or  #  YENİ: OCR hatası için
@@ -3355,7 +3297,6 @@ class ClassificationAgent(BaseAgent):
             "press release" in t #  YENİ (81839536.png için spesifik)
         )
 
-        # Reject if it's obviously a formal letter intro
         looks_like_letter_salutation = re.search(r"^\s*(dear|hi|hello)\b", top_block, re.I|re.M)
 
         return bool(
@@ -3363,7 +3304,6 @@ class ClassificationAgent(BaseAgent):
             (has_corporate_path and has_subjectish) #  YENİ: path + subject = email
         ) and not looks_like_letter_salutation
 
-    # NEW HELPER (FIX 3)
     def _has_job_history_timeline(self, raw_text: str, norm_text: str) -> bool:
         """
         Detects repeating YYYY-YYYY / YYYY-present ranges with job-ish titles,
@@ -3371,14 +3311,12 @@ class ClassificationAgent(BaseAgent):
         """
         t = ((raw_text or "") + "\n" + (norm_text or "")).lower()
 
-        # find 2+ employment-style ranges like '2018 - 2020' or '2018-2020' or '2018 - present'
         ranges = re.findall(
             r"(19|20)\d{2}\s*[-–—]\s*((19|20)\d{2}|present)",
             t
         )
         multi_ranges = len(ranges) >= 2
 
-        # look for job titles that wouldn't appear on invoices
         job_words = re.search(
             r"\b(manager|engineer|director|analyst|assistant|associate|intern|fellow|consultant|researcher|scientist|instructor|clinician|specialist|technician|administrator|coordinator|supervisor|developer|architect)\b",
             t
@@ -3466,18 +3404,15 @@ class ClassificationAgent(BaseAgent):
         if has_invoice_keywords and has_table_tokens and not (has_merchant or has_terminal or has_auth or pos_phrase or card_token):
             return ("invoice", 0.80)
             
-        # Original logic continuation / Signal Boost (Recalculate hits with boosters)
         if has_merchant: pos_hits += 2
         if has_terminal: pos_hits += 1
         if has_auth:     pos_hits += 1
         if card_token:   pos_hits += 1
         if has_time and money_cnt >= 2: pos_hits += 1
 
-        # Invoice Signal Reduction: 'merchant' presence is a penalty for invoice
         if has_merchant:
             inv_hits -= 1
 
-        # NEW ADDITION: Extra weight for table + 'invoice' keyword
         if "invoice" in t and re.search(r"\b(qty|quantity|unit\s*price|po\s*(no|#))\b", t):
             inv_hits += 2
             
@@ -3499,11 +3434,9 @@ class ClassificationAgent(BaseAgent):
             if score <= -2:
                 return ("invoice", 0.72)
 
-        # Invoice ↔ Receipt disambiguation for high confidence errors (invoice bias)
         both_strong = (pos_hits >= 3 and inv_hits >= 3) or (("invoice" in t) and re.search(r"\b(qty|unit\s*price|po\s*(no|#))\b", t))
         if both_strong:
             if ("invoice" in t) and re.search(r"\b(qty|quantity|unit\s*price|po\s*(no|#))\b", t):
-                # prioritize invoice if table indicators are present, but penalize if merchant is strong
                 return ("invoice", 0.74 if not has_merchant else 0.72)
             elif has_merchant or card_token or has_auth:
                 return ("receipt", 0.72)
@@ -3512,12 +3445,9 @@ class ClassificationAgent(BaseAgent):
 
         return (None, 0.0)
 
-    # NEW: Resume detection (FIX 1: Resume -> Invoice)
     def _is_resume_like(self, raw_text: str, norm_text: str) -> bool:
-        """Strong resume pattern detection (00071736_00071737.png)"""
         low = ((raw_text or "") + "\n" + (norm_text or "")).lower()
         
-        #  YENİ: Grant/Research indicators (academic CV'ler için)
         grant_indicators = bool(re.search(
             r"\b(grant|nih|nsf|research support|fellowship|postdoctoral|principal investigator)\b",
             low
@@ -3536,19 +3466,17 @@ class ClassificationAgent(BaseAgent):
             r"\bprojects?\b",
             r"\bcurriculum\s+vitae?\b|\brésumé\b|\bresume\b",
             r"\b(employment history|research fellow|residency|clinical instructor|private practice)\b",
-            r"\bbiographical\s+(sketch|data)\b",  #  YENİ
-            r"\bprofessional\s+affiliations?\b",    #  YENİ
+            r"\bbiographical\s+(sketch|data)\b",  
+            r"\bprofessional\s+affiliations?\b",   
         ]
         
         section_hits = sum(1 for p in section_patterns if re.search(p, low))
         
-        # Resume indicators
         has_years_exp = bool(re.search(r"\d+\+?\s*years?\s*(of\s*)?(experience|exp)\b", low))
         has_degree = bool(re.search(r"\b(bachelor|master|phd|b\.?s\.?|m\.?s\.?|m\.?a\.?|degree|university)\b", low)) #  M.A. eklendi
         has_date_range = len(re.findall(r"\b(19|20)\d{2}\s*[-–—]\s*(present|(19|20)\d{2})\b", low)) >= 2
         has_email_phone = bool(self.re_email_addr.search(low)) and bool(re.search(r"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b", low))
         
-        #  YENİ: Academic titles boost
         has_academic_title = bool(re.search(
             r"\b(professor|assistant professor|associate professor|lecturer|researcher|scientist|fellow)\b",
             low
@@ -3559,16 +3487,15 @@ class ClassificationAgent(BaseAgent):
         if has_degree: score += 2
         if has_date_range: score += 2
         if has_email_phone: score += 1
-        if grant_indicators: score += 3  #  YENİ: Grant = strong CV signal
-        if has_academic_title: score += 2  #  YENİ
+        if grant_indicators: score += 3  
+        if has_academic_title: score += 2  
         
-        # If any of the strong titles are present, add a boost
-        if re.search(r"\bcurriculum\s+vitae?\b|\brésumé\b|\bresume\b|\bbiographical\b", low): #  YENİ: 'biographical' eklendi
+        if re.search(r"\bcurriculum\s+vitae?\b|\brésumé\b|\bresume\b|\bbiographical\b", low): 
             score += 3
         
         return score >= 6
 
-    #  YENİ FONKSİYON: Haber Güç Skoru
+    # Haber Güç Skoru
     def _calculate_news_article_strength(self, raw_text: str, norm_text: str) -> int:
         score = 0
         t = (raw_text or "").lower()
@@ -3599,26 +3526,23 @@ class ClassificationAgent(BaseAgent):
         return score
 
 
-    # Improved News Article detection to reduce Email/Form confusion (News recall↑, precision maintained)
     def _looks_like_news_article(self, raw_text: str, norm_text: str) -> bool:
-        """IMPROVED: Highly strict news detection (RECALL-FOCUSED)"""
         #  DÜZELTME: _news_article_score yerine _calculate_news_article_strength kullanıldı
         news_strength = self._calculate_news_article_strength(raw_text, norm_text)
         score = news_strength 
         raw = raw_text or ""
         top = "\n".join(raw.splitlines()[:60])
 
-        # VETO (FIX 4): Reject lab forms
         if self._is_lab_form_like(raw_text, norm_text):
             return False
         
-        # Email veto: gerçek e-posta eserleri varsa haber olmasın (FIX)
+        # Email veto: gerçek e-posta eserleri varsa haber olmasın
         has_email_headers = self._count_email_headers(raw) >= 2
         has_email_with_headers = self._has_email_address(raw) and re.search(r"^(from|to|subject)\s*:", top, re.I|re.M)
         has_message_id = re.search(r"^message[-\s]?id\s*:", top, re.I|re.M)
         
         if has_email_headers or has_email_with_headers or has_message_id:
-             # Sadece News Article strength yüksek değilse veto et (eski davranış)
+             # Sadece News Article strength yüksek değilse veto et
              if news_strength < 7:
                  return False
             
@@ -3627,35 +3551,29 @@ class ClassificationAgent(BaseAgent):
         
         t = (raw_text + "\n" + norm_text).lower()
         
-        # News specific keyword density - INCREASED
         news_kw_count = sum(1 for kw in self.news_keywords if kw in t)
         if news_kw_count >= 5: 
             score += 2
         elif news_kw_count >= 3:
             score += 1
             
-        # Paragraph structure - MORE STRICT
         paragraphs = [p.strip() for p in raw_text.split('\n\n') if len(p.strip()) > 100]
         if 4 <= len(paragraphs) <= 12: 
             score += 1
             
-        # Quote marks
         quote_count = t.count('"')
         if quote_count >= 4:
             score += 1
-            
-        # New requirement: Byline or Publisher keyword must be in the first 60 lines (FIX)
+
         has_byline = bool(self.re_news_byline.search(top))
         has_publisher = bool(self.re_news_pubwords.search(top))
         if not (has_byline or has_publisher):
             # Ancak dateline varsa kurtarabilir
             if not self.re_dateline.search(top):
-                return False  # Cannot be news without headline/byline/publisher
-            
-        # News structure: headline + byline + body
+                return False 
         has_body_text = len([ln for ln in raw_text.splitlines() if len(ln.strip()) > 50]) >= 10
         
-        #  DÜZELTME: Threshold gevşetildi
+        # Threshold gevşetildi
         if not (news_strength >= 2 and has_body_text):  # 3 -> 2
             return False
         
@@ -3668,7 +3586,6 @@ class ClassificationAgent(BaseAgent):
             norm_text = request.content.get('text_normalized', raw_text) or ''
             joined = f"{raw_text}\n{norm_text}"
 
-            # Empty guard
             if len(raw_text.strip()) == 0 and len(norm_text.strip()) == 0:
                 response = await self.send_message(
                     receiver="coordinator",
@@ -3680,23 +3597,19 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # ---- EARLY EXIT CHECKS (CRITICAL FIX: Priority Re-ordering) ----
-
-            # 1️ FIX 7: Newspaper Front Page Veto (07STATE-tear-articleLarge.webp)
             if self._is_newspaper_frontpage_like(raw_text, norm_text):
                 response = await self.send_message(
                     receiver="coordinator",
                     message_type=MessageType.RESPONSE,
                     content={'action': 'classification_complete',
                              'document_type': 'news_article',
-                             'confidence': 0.90, # High confidence for front page
+                             'confidence': 0.90, 
                              'workflow_id': request.content.get('workflow_id')}
                 )
                 if self.coordinator:
                     await self.coordinator.receive_message(response)
                 return
 
-            # 2️ FIX 4: Lab/Tech Form Veto (00837285.png)
             if self._is_lab_form_like(raw_text, norm_text):
                 response = await self.send_message(
                     receiver="coordinator",
@@ -3710,7 +3623,6 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # 3️ FIX 8: Strong Resume Check (00071736_00071737.png)
             if self._is_resume_like(raw_text, norm_text):
                 response = await self.send_message(
                     receiver="coordinator",
@@ -3726,7 +3638,6 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # 4️ NEW (FIX 3): Resume timeline rescue: CVs without classic headers
             if self._has_job_history_timeline(raw_text, norm_text):
                 response = await self.send_message(
                     receiver="coordinator",
@@ -3742,7 +3653,6 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # --- Intermediate Checks (for Email, Form, Inv/Rec Vetoes) ---
             hdr_top = self._headers_in_top_block(raw_text, top_n_lines=60)
             any_hdr_top = self._count_any_email_headers_top(raw_text, top_n_lines=60)
             core_hdrs = self._count_email_headers(raw_text)
@@ -3757,31 +3667,27 @@ class ClassificationAgent(BaseAgent):
             quote_lines = sum(1 for ln in raw_text.splitlines() if ln.strip().startswith('>'))
             has_email_addr = self._has_email_address(raw_text)
             label_line_cnt = len(self.re_label_line.findall(raw_text))
-            has_corporate_email_pattern = bool(self.re_corporate_path_email.search(raw_text)) #  FIX 2: Corporate Email
+            has_corporate_email_pattern = bool(self.re_corporate_path_email.search(raw_text)) 
             looks_like_form = self._is_form_layout_like(raw_text, norm_text)
             
-            #  DÜZELTME 3: News strength değişkenini buraya taşı
             news_strength = self._calculate_news_article_strength(raw_text, norm_text)
 
-            #  Email signal - but check for news veto FIRST
             email_signal = (
-                ((core_hdrs >= 2) or (any_hdr_top >= 3)) and # CORE: 2+ core OR 3+ any
-                (has_email_addr or sys_hdrs >= 1 or has_thread or quote_lines >= 5 or has_corporate_email_pattern) #  EKLE
+                ((core_hdrs >= 2) or (any_hdr_top >= 3)) and
+                (has_email_addr or sys_hdrs >= 1 or has_thread or quote_lines >= 5 or has_corporate_email_pattern) 
             )
 
             #  News article çok güçlüyse email'i veto et
             if email_signal and news_strength >= 7:
-                email_signal = False  # News dominates
+                email_signal = False 
 
             #  Form düzeni baskınsa e-postayı veto et
             if email_signal and (label_line_cnt >= 4 or self._is_form_layout_like(raw_text, norm_text)):
-                # If strong form AND strong email, prefer Form unless core headers are overwhelming (e.g. 3+)
                 if core_hdrs < 3:
                     email_signal = False
-                else: # 3+ core headers + form layout: still email, but proceed to check Inv/Rec later
+                else: 
                     pass
 
-            # 5️ NEWS ARTICLE early check (STRENGTHENED) -  KRİTİK DÜZELTME
             looks_news = self._looks_like_news_article(raw_text, norm_text)
             if looks_news:  #  Düzeltilmiş: _looks_like_news_article True ise hemen çıkış yap
                 response = await self.send_message(
@@ -3798,8 +3704,7 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # 6️ EMAIL headers (top-60)
-            informal_email_hit = self._looks_like_informal_email_body(raw_text) # Re-calculate for use below
+            informal_email_hit = self._looks_like_informal_email_body(raw_text) 
             if email_signal:
                 ri_label, _ = self._score_receipt_vs_invoice(raw_text, norm_text)
                 if ri_label != "receipt":
@@ -3817,7 +3722,6 @@ class ClassificationAgent(BaseAgent):
                         await self.coordinator.receive_message(response)
                     return
 
-            # 7️ NEW (FIX 1): Legacy / informal email rescue (Lotus Notes style etc.)
             if informal_email_hit:
                 ri_label, _ = self._score_receipt_vs_invoice(raw_text, norm_text)
                 if ri_label != "receipt":
@@ -3836,14 +3740,13 @@ class ClassificationAgent(BaseAgent):
                     return
 
 
-            # 8️ ---- STRONG FORM VETO (runs BEFORE RI early-check) (FIX 2) ----
             strong_form = (
                 len(self.re_label_line.findall(raw_text)) >= 5 or
                 sum(1 for kw in self.form_kw_headers if kw in (norm_text or "").lower()) >= 4 or
-                self._is_lab_form_like(raw_text, norm_text) or # FIX 2 & 4
+                self._is_lab_form_like(raw_text, norm_text) or 
                 (self._is_form_layout_like(raw_text, norm_text) and len(re.findall(r"\b\d[\d\.,]*\b", (norm_text or ""))) >= 10)
             )
-            # Çok para tutarı ve 'invoice' geçse bile kolonlu başlık yoğunluğu form'a öncelik verir (FIX)
+            # Çok para tutarı ve 'invoice' geçse bile kolonlu başlık yoğunluğu form'a öncelik verir
             if strong_form:
                 response = await self.send_message(
                     receiver="coordinator",
@@ -3857,7 +3760,6 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # 9️ RECEIPT vs INVOICE early check
             label_ri, conf_ri = self._score_receipt_vs_invoice(raw_text, norm_text)
             if label_ri:
                 response = await self.send_message(
@@ -3872,9 +3774,7 @@ class ClassificationAgent(BaseAgent):
                     await self.coordinator.receive_message(response)
                 return
 
-            # --- Zero-Shot Classification (Fallback) ---
 
-            # IMPROVED: Zero-shot with THREE hypotheses
             sample = self._make_sample(f"{raw_text} {norm_text}") or (joined if joined.strip() else "document")
             try:
                 r1 = self.classifier(sample, self.candidate_labels_en, multi_label=False,
@@ -3888,7 +3788,7 @@ class ClassificationAgent(BaseAgent):
                 r2 = r1
                 r3 = r1
 
-            # IMPROVED: Average scores from THREE models
+
             scores = {}
             for lbl, sc in zip(r1["labels"], r1["scores"]):
                 scores[lbl] = scores.get(lbl, 0.0) + float(sc)
@@ -3902,26 +3802,23 @@ class ClassificationAgent(BaseAgent):
 
             document_type = self.label_map_en.get(pred_label, "other")
 
-            # 2) Recover Letter/News -> Other falls (low-conf recovery)
             if confidence < 0.60:
-                # Letter check (tightened) - Added has_thread_artifacts check
                 has_thread_artifacts = self._has_email_thread_artifacts(raw_text)
                 #  Düzeltme 1: Low-Confidence Letter Check bloğu: news_article'ı koru
                 if document_type in ("email", "form", "other"): 
                     if self._is_letter_like(raw_text, norm_text) and self._count_email_headers(raw_text) <= 1 and not has_thread_artifacts:
                         document_type, confidence = "letter", 0.72
-                # News check (tightened) - Improved confidence threshold
                 elif self._looks_like_news_article(raw_text, norm_text):
                     document_type, confidence = "news_article", 0.74 # 0.72 -> 0.74
-                # Email check FIRST (more strict than old block)
+
                 elif core_hdrs >= 2 and self._has_email_address(joined):
                     document_type = "email"
                     confidence = 0.70
-                # Resume check
+
                 elif self._is_resume_like(raw_text, norm_text):
                     document_type = "resume"
                     confidence = 0.72
-                # Form check
+
                 elif self._is_form_layout_like(raw_text, norm_text):
                     document_type = "form"
                     confidence = 0.70
@@ -3933,14 +3830,13 @@ class ClassificationAgent(BaseAgent):
                     document_type = "invoice"
                     confidence = 0.68
                 else:
-                    # Keyword hint as last resort
+
                     hint = self._keyword_hint(joined)
                     if hint and hint != "other":
                         document_type = hint
                         confidence = 0.60
-                    # If still 'other' and there's text, make a default guess
+
                     elif document_type == "other" and len(joined.strip()) > 100:
-                        # Default guess based on text length - Increased minimum confidence
                         if len(joined.splitlines()) > 50:
                             document_type = "form"
                             confidence = 0.52    # 0.45 -> 0.52
@@ -3948,25 +3844,23 @@ class ClassificationAgent(BaseAgent):
                             document_type = "letter"
                             confidence = 0.52    # 0.45 -> 0.52
 
-            elif confidence < 0.68: # Medium-low conf threshold 0.55 -> 0.68
-                # Medium-low confidence: check hints
+            elif confidence < 0.68: 
                 hint = self._keyword_hint(joined)
                 if hint and hint != "other":
                     document_type = hint
                     confidence = max(confidence, 0.60)
 
-            # Email ↔ Form disambiguation - STRENGTHENED
             if document_type == "email":
-                # If it looks like a Form and no strong email signal, convert to form
+
                 if self._is_form_layout_like(raw_text, norm_text) and not email_signal and not informal_email_hit:
                     document_type, confidence = "form", max(confidence, 0.80)
-                # Weak email signal
+
                 elif core_hdrs < 2 and not has_thread:
                     if not self._has_email_address(joined):
                         confidence = min(confidence, 0.65)
                     else:
                         confidence = min(confidence, 0.75)
-                # Strong email signal
+
                 elif email_signal or informal_email_hit:
                     confidence = max(confidence, 0.85)
 
@@ -3975,7 +3869,6 @@ class ClassificationAgent(BaseAgent):
                 if (email_signal and core_hdrs >= 3) or informal_email_hit:
                     document_type, confidence = "email", max(confidence, 0.90)
 
-            # IMPROVED: Strong Form override - but not a news article
             if self._is_form_layout_like(raw_text, norm_text) or self._is_lab_form_like(raw_text, norm_text):
                 if document_type in ("other", "resume", "letter"):
                     document_type = "form"
@@ -3991,8 +3884,6 @@ class ClassificationAgent(BaseAgent):
                         document_type = "form"
                         confidence = 0.75
 
-            # Form vs News guard
-            # Form vs News guard: if news structure is prominent, demand higher threshold to shift to form
             if document_type == "form":
                 if self._looks_like_news_article(raw_text, norm_text):
                     strong_form_local = (
@@ -4004,14 +3895,12 @@ class ClassificationAgent(BaseAgent):
                     if not strong_form_local:
                         document_type, confidence = "news_article", max(confidence, 0.74)
 
-            # Minimum confidence increase for Form
             if document_type == "form" and confidence < 0.65:
                 if self._is_form_like(joined):
                     confidence = 0.70
 
-            # IMPROVED: Letter detection - and email separation - Added has_thread_artifacts check (FIX 1)
+           
             has_thread_artifacts = self._has_email_thread_artifacts(raw_text)
-            #  Düzeltme 2: Improved Letter Detection bloğu: news_article'ı koru
             if document_type in ("email", "form", "other"): 
                 if self._is_letter_like(raw_text, norm_text):
                     email_hdr_count = self._count_email_headers(raw_text)
@@ -4030,7 +3919,6 @@ class ClassificationAgent(BaseAgent):
                         if letter_score >= 3:
                             document_type, confidence = "letter", max(confidence, 0.70)
 
-            # Letter vs Email sharpening - STRENGTHENED (FIX 1)
             if document_type == "letter":
                 email_headers = self._count_email_headers(raw_text)
                 strong_email_v2 = (email_headers >= 3) or \
@@ -4044,7 +3932,6 @@ class ClassificationAgent(BaseAgent):
                     document_type = "email"
                     confidence = 0.80 # Letter --> Email conversion
 
-            # Invoice ↔ Receipt disambiguation
             if document_type in ("invoice", "receipt"):
                 #  Düzeltme 3: News article kontrolü ekle
                 if self._looks_like_news_article(raw_text, norm_text):
@@ -4065,9 +3952,8 @@ class ClassificationAgent(BaseAgent):
                         else:
                             document_type, confidence = "receipt", max(confidence, 0.72) # Default to receipt if both are strong or if merchant is present
 
-            # FINAL SANITY CHECK: Prevent News Article false positives
             if document_type == "news_article":
-                # Email or form features
+
                 if core_hdrs >= 2 or informal_email_hit:
                     document_type = "email"
                     confidence = 0.75
@@ -4079,7 +3965,6 @@ class ClassificationAgent(BaseAgent):
                     if form_indicators >= 1 or self._is_lab_form_like(raw_text, norm_text):
                         document_type = "form"
                         confidence = 0.72
-                # Is it truly a news article? Recheck
                 elif not self._looks_like_news_article(raw_text, norm_text):
                     # Haber değilse ve tablo/para yoğun ise fatura/fiş; değilse letter/form ipucuna dön
                     if self._is_receipt_like(joined):
@@ -4093,22 +3978,18 @@ class ClassificationAgent(BaseAgent):
                     else:
                         confidence = min(confidence, 0.65)
 
-            # FINAL: Aggressive fallback if still 'other' (FIX)
             if document_type == "other" and (raw_text.strip() or norm_text.strip()):
 
-                #  YENİ: OCR quality-based fallback
                 readable_chars = sum(1 for c in joined if c.isalnum() or c.isspace())
                 total_chars = len(joined)
                 readable_ratio = readable_chars / max(1, total_chars)
                 lines = raw_text.splitlines()
 
                 if readable_ratio < 0.6 and len(joined.strip()) > 50:  # Poor OCR quality
-                    #  EKLE: Poor OCR ama news keywords varsa news_article olabilir
                     news_kw_count = sum(1 for kw in self.news_keywords if kw in joined.lower())
                     if news_kw_count >= 3:  # 3+ news keyword = likely news
                         document_type, confidence = "news_article", 0.68
                     else:
-                        # Original structural heuristics
                         avg_line_len = sum(len(ln) for ln in lines) / max(1, len(lines))
                         if len(lines) > 30 and 20 < avg_line_len < 60:
                             document_type, confidence = "news_article", 0.65  # Columnar layout
@@ -4117,7 +3998,7 @@ class ClassificationAgent(BaseAgent):
                         else:
                             document_type, confidence = "letter", 0.60  # Default
 
-                else: # Good OCR, use existing fallback logic
+                else:
                     has_thread = self._has_email_thread_artifacts(raw_text)
                     has_email_addr = self._has_email_address(raw_text)
                     # Prioritize: resume > form > email > news > letter > receipt > invoice
@@ -4134,7 +4015,6 @@ class ClassificationAgent(BaseAgent):
                                   document_type, confidence = dt, max(confidence, 0.68)
                                   break
 
-            # Per-class minimum confidence thresholds
             per_class_min = {
                 "email": 0.70,
                 "form": 0.68,
@@ -4146,7 +4026,6 @@ class ClassificationAgent(BaseAgent):
             }
             thr = per_class_min.get(document_type, 0.60)
             if confidence < thr:
-                # fast fallback: correct if strong signals exist
                 if self._count_email_headers(raw_text) >= 2 and self._has_email_address(joined):
                     document_type, confidence = "email", 0.70
                 elif self._is_form_layout_like(raw_text, norm_text) or self._is_lab_form_like(raw_text, norm_text):
@@ -4181,11 +4060,9 @@ class ClassificationAgent(BaseAgent):
             if self.coordinator:
                 await self.coordinator.receive_message(error_msg)
 
-    # Helper methods
     def _headers_in_top_block(self, raw_text: str, top_n_lines: int = 30) -> int:
         lines = (raw_text or "").splitlines()
         top = "\n".join(lines[:top_n_lines])
-        # Count only definite email headers
         core_headers = [
             re.compile(r"^from\s*:", re.I | re.M),
             re.compile(r"^to\s*:", re.I | re.M),
@@ -4229,7 +4106,6 @@ class ClassificationAgent(BaseAgent):
         supportive = (units_hits >= 2 and numbers >= 12)
         return strong or (header_hits >= 2 and supportive)
     
-    # IMPROVED: More flexible letter signals  
     def _is_letter_like(self, raw_text: str, norm_text: str) -> bool:
         raw = raw_text or ""
         norm = norm_text or ""
@@ -4245,20 +4121,18 @@ class ClassificationAgent(BaseAgent):
         subj_hit = bool(self.re_letter_subject.search(top_lines))
         few_email_hdrs = self._count_email_headers(raw) <= 1
         has_thread_artifacts = self._has_email_thread_artifacts(raw) # NEW CHECK
-
-        # NEW FLEXIBLE SIGNALS        
+       
         joined = (raw or "").lower()
         sal_hit_new = any(x in joined for x in [
             "dear ", "greetings", "to whom it may concern"
         ]) or bool(re.search(r"^\s*(dear|hi|hello)\b", joined, re.M))
 
-        # NEW: kapanış + adres veya tarih → güçlü sinyal
+        # kapanış + adres veya tarih → güçlü sinyal
         strong_pattern = (sal_hit or sal_hit_new) and (close_hit or subj_hit or date_hit or address_hit)
         score = sum([sal_hit, close_hit, date_hit, address_hit, subj_hit, few_email_hdrs, 1 if sal_hit_new else 0])
         
         has_email = self._has_email_address(raw)
         
-        # Must pass one of the patterns (strong or new flexible) AND must not look like an email/thread
         return (strong_pattern or score >= 4) and (not has_email or score >= 5) and few_email_hdrs and not has_thread_artifacts
 
 # ---------------- Gemini QA Agent ----------------
@@ -4394,7 +4268,6 @@ class LlamaLocalQAAgent(BaseAgent):
             stdout = (r.stdout or b"").decode("utf-8", errors="replace")
             stderr = (r.stderr or b"").decode("utf-8", errors="replace")
 
-        # İstersen debug için:
             if stderr.strip():
                 logger.warning(f"Ollama stderr: {stderr.strip()[:300]}")
 
@@ -4592,7 +4465,6 @@ class CoordinatorAgentWithQA(BaseAgent):
             logger.warning("Gemini disabled (no key or package missing)")
             self.gemini_agent = None
 
-        # Llama required for local comparison
         try:
             self.llama_agent = LlamaLocalQAAgent()
             self.llama_agent.set_coordinator(self)
@@ -4639,7 +4511,7 @@ class CoordinatorAgentWithQA(BaseAgent):
         ) -> Dict[str, Any]:
 
             try:
-                logger.info(">>> ENTER process_document_with_qa")
+                logger.info(" ENTER process_document_with_qa")
 
         # 1) Doküman pipeline
                 doc_result = await self.process_document(
@@ -4768,13 +4640,12 @@ class CoordinatorAgentWithQA(BaseAgent):
                             "response_time": float(elapsed),
                         }
 
-            # 4-7) Alanları işle (mevcut kodunuz aynı kalacak)
+            # 4-7) Alanları işle
                     answer_text = (qa_ans.get("answer") or "").strip()
                     found_flag = bool(qa_ans.get("found", False))
                     response_time = float(qa_ans.get("response_time", elapsed))
                     evidence_text = (qa_ans.get("evidence") or "").strip()
 
-                    # Eğer answer doluysa found'u True kabul et (negatif template değilse)
                     if answer_text and not any(x in answer_text.lower() for x in ["information not found", "no response", "timeout"]):
                         found_flag = True
 
@@ -4800,16 +4671,15 @@ class CoordinatorAgentWithQA(BaseAgent):
 
                     logger.info(f" APPENDED | model={model_key} | new_len={len(qa_results[model_key])}")
 
-                # === SIRALI QA (STABLE & KOTA DOSTU) ===
 
                 if use_model in ("gemini", "both") and self.gemini_agent is not None:
                     for q in questions:
-                        logger.info(f">>> ASKING | model=gemini | q={q}")
+                        logger.info(f" ASKING | model=gemini | q={q}")
                         await ask(self.gemini_agent, "gemini", q)
 
                 if use_model in ("llama", "both") and self.llama_agent is not None:
                     for q in questions:
-                        logger.info(f">>> ASKING | model=llama | q={q}")
+                        logger.info(f" ASKING | model=llama | q={q}")
                         await ask(self.llama_agent, "llama", q)
 
 # hiçbir agent yoksa
@@ -4974,7 +4844,6 @@ class QATestEngineA2A:
             t = s.get("true_type") or "other"
             groups[t].append(s)
 
-    # Her grubun içini karıştır (random ama seed'li)
         for t in groups:
             rng.shuffle(groups[t])
 
@@ -5111,10 +4980,8 @@ class QATestEngineA2A:
                 df["response_time"] = pd.to_numeric(df["response_time"], errors="coerce").fillna(0.0)
    
             with pd.ExcelWriter(xlsx, engine='openpyxl') as writer:
-            # Sheet 1: Tüm sonuçlar
                 df.to_excel(writer, sheet_name='All Results', index=False)
             
-            # Sheet 2: Model karşılaştırması
                 if 'model' in df.columns:
                 # Her model için özet
                     summary_data = []
@@ -5132,7 +4999,6 @@ class QATestEngineA2A:
                     summary_df = pd.DataFrame(summary_data)
                     summary_df.to_excel(writer, sheet_name='Model Comparison', index=False)
             
-            # Sheet 3: Belge tiplerine göre performans
                 if 'qa_used_type' in df.columns:
                     doc_summary = []
                     for doc_type in df['qa_used_type'].unique():
@@ -5220,7 +5086,6 @@ class TestDatasetManager:
 # ========================= TEST ENGINE =========================
 
 class TestEngine:
-    """Enhanced TestEngine with parallel processing support"""
     
     def __init__(self, coordinator, test_json_path="test_data/test_dataset.json"):
         self.coordinator = coordinator
@@ -5290,11 +5155,9 @@ class TestEngine:
                     "ocr_engine": result.get("ocr_engine"),
                     "processing_time": 0.0,
 
-                    #  Yeni alanlar: hata analizi için kısa önizleme
                     "ocr_preview": (result.get("text") or "")[:3000],
                     "normalized_preview": (result.get("normalized_text") or "")[:3000],
 
-                    # (isteğe bağlı) ham metin uzunlukları — filtreleme/analiz için faydalı
                     "ocr_len": len(result.get("text") or ""),
                     "normalized_len": len(result.get("normalized_text") or ""),
                     "mask_stats": mask_stats
@@ -5314,13 +5177,12 @@ class TestEngine:
             logger.info(f"[{index}/{total}] Testing: {sample['file_name']}")
             result = await self.run_single_test(sample)
             
-            status = "" if result["predicted_type"] not in ("ERROR", "SKIPPED") and result.get("correct") else "❌"
+            status = "" if result["predicted_type"] not in ("ERROR", "SKIPPED") and result.get("correct") else "X"
             logger.info(f"{status} {sample['true_type']} -> {result['predicted_type']}")
             
             return result
     
     async def run_all_tests_parallel(self):
-        """PARALLEL VERSION - Batch processing ile test çalıştırma"""
         logger.info("\n" + "=" * 60)
         logger.info("TEST PROCESS STARTING - PARALLEL MODE")
         logger.info(f"Max Parallel Tasks: {self.max_parallel}")
@@ -5330,7 +5192,7 @@ class TestEngine:
         total = len(data)
         logger.info(f" {total} test samples found\n")
         
-        # Tüm testleri paralel başlat (semaphore otomatik sınırlayacak)
+        # Tüm testleri paralel başlat
         tasks = [
             self.run_single_test_with_semaphore(sample, i+1, total)
             for i, sample in enumerate(data)
@@ -5473,7 +5335,6 @@ class TestEngine:
             print(f"\n High-confidence ERRORS (≥70%): {len(high_wrong)}")
             print(high_wrong[['file_name', 'true_type', 'predicted_type', 'confidence_score']].to_string(index=False))
 
-        # Distribution plots
         fig, axes = plt.subplots(1, 2, figsize=(14, 5))
         axes[0].hist(df['confidence_score'], bins=20, edgecolor='black', alpha=0.7)
         axes[0].axvline(df['confidence_score'].mean(), color='red', linestyle='--',
@@ -5536,7 +5397,7 @@ class TestEngine:
                     f.write(f"{t:15s} -> {p:15s}: {c} times\n")
             else:
                 f.write("No errors! Perfect classification!\n")
-        logger.info(f"📄 Summary report saved: {out}")
+        logger.info(f" Summary report saved: {out}")
 
     def error_analysis(self):
         df = pd.DataFrame(self.results)
@@ -5688,7 +5549,7 @@ class TestEngine:
         # Sheet 4: Dosya Detayları
             df_files.to_excel(writer, sheet_name='Dosya Detayları', index=False)
     
-        logger.info(f"📊 Excel report saved: {excel_file}")
+        logger.info(f" Excel report saved: {excel_file}")
     
     # Console özeti
         print(f"\n{'='*80}")
@@ -5830,8 +5691,7 @@ async def main(parallel: bool = True):
     # Stop all agents (cancel tasks)
     for task in tasks:
         task.cancel()
-    
-    # Run a dummy to allow cancelled tasks to finish cleanup  
+  
     try:
         await asyncio.gather(*tasks, return_exceptions=True)
     except Exception:
@@ -5842,7 +5702,7 @@ async def main(parallel: bool = True):
     print("\n" + "=" * 80)
     print("TEST EXECUTION COMPLETED")
     print("=" * 80)
-    print(f"⏱  Total time: {elapsed / 60:.1f} minutes")
+    print(f"  Total time: {elapsed / 60:.1f} minutes")
     print(f"      Mode: {'PARALLEL' if parallel else 'SEQUENTIAL'}")
     if n > 0:
         print(f"      Average per sample: {elapsed / n:.2f} seconds")
@@ -5864,7 +5724,7 @@ async def main(parallel: bool = True):
     print("=" * 80 + "\n")
 
 async def main_with_qa_a2a(parallel: bool = True):
-    # IMPORTANT: burada artık await main(...) YOK. Direkt Q&A başlar.
+    # burada artık await main(...) YOK. Direkt Q&A başlar.
 
     coordinator = CoordinatorAgentWithQA(
         ocr_default_backend="tesseract" if PYTESS_AVAILABLE else "trocr",
@@ -5887,11 +5747,10 @@ async def main_with_qa_a2a(parallel: bool = True):
     qa_engine = QATestEngineA2A(coordinator)
 
     try:
-        # burada istersen limit=10 ile dene
         await qa_engine.run_streaming_qa(
             test_dataset_path="test_data/test_dataset.json",
-            limit=10,           # 10 yaparsan hızlı deneme
-            use_model="gemini",     # "gemini" veya "llama" da verebilirsin
+            limit=10,           
+            use_model="gemini",    
             questions_per_doc=2
         )
     finally:
@@ -5947,7 +5806,6 @@ async def quick_test_single_image(image_path: str):
             else:
                 print("   No PII detected")
         
-        #  YENİ: Maskelenmiş görseli kaydet ve göster
         if 'masked_image' in result and result['masked_image']:
             # Klasör oluştur
             output_dir = Path("quick_test_masked")
@@ -5966,7 +5824,6 @@ async def quick_test_single_image(image_path: str):
             print(f"\n Masked Image Saved: {output_path}")
             print(f"   → You can view it now!")
             
-            #  BONUS: Otomatik olarak görseli aç (Windows/Mac/Linux)
             try:
                 import platform
                 import subprocess
