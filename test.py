@@ -491,7 +491,7 @@ class OCRAgent(BaseAgent):
                 confs = [int(c) for c in data.get("conf", []) if str(c) not in ("-1", "")]
                 avg_conf = (sum(confs) / len(confs) / 100.0) if confs else 0.0
 
-                # 🔥 Quality check - reject gibberish
+                #  Quality check - reject gibberish
                 readable_ratio = len([c for c in txt if c.isalnum() or c.isspace()]) / max(1, len(txt))
                 
                 # Sadece okunabilirlik oranı %70'in üzerindeyse ve mevcut en iyi metin/güvenilirlik oranını aşıyorsa kabul et
@@ -1066,7 +1066,7 @@ class HybridPIIMaskingAgent(BaseAgent):
         dt = (doc_type or "other").lower()
 
         if dt not in {"form", "letter", "other"}:
-            logger.info(f"⏭ Skipping signature detection for doc_type={dt}")
+            logger.info(f" Skipping signature detection for doc_type={dt}")
             return []
 
         logger.info(f" Starting OCR signature detection for doc_type={dt}")
@@ -1289,9 +1289,9 @@ class HybridPIIMaskingAgent(BaseAgent):
                     #  YENİ ESNEK KONTROL
                         if is_handwritten and (ink > 0.01 or edge > 0.005):
                             found_regions.append(base_region)
-                            logger.info(f"  ✅ Signature FOUND below")
+                            logger.info(f"   Signature FOUND below")
                         else:
-                            logger.info(f"  ⚠️ No signature detected")
+                            logger.info(f"   No signature detected")
                     else:
                         right_region = (x + w + 10, y - 5, 200, h + 30)
                         below_region = (x - 10, y + h + 4, w + 100, 80)
@@ -1309,7 +1309,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                         else:
                             logger.info(f"   No signature detected")
 
-        logger.info(f"📍 Final: Found {len(found_regions)} signature regions")
+        logger.info(f" Final: Found {len(found_regions)} signature regions")
         return found_regions
 
     def _find_signatures_with_opencv(
@@ -1945,7 +1945,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                 # Tolerans: ±120 piksel (Shelton LLC gibi biraz içeriden başlayanlar için geniş tuttuk)
                     x_diff = abs(next_x - label_x)
                     if x_diff > 120:
-                        logger.info(f"    ⏭ Skipped (wrong X): '{next_text}' (X={next_x}, diff={x_diff})")
+                        logger.info(f"     Skipped (wrong X): '{next_text}' (X={next_x}, diff={x_diff})")
                         continue
 
                 # Y-KOORDINAT: adres bloğunun devamı mı?
@@ -2099,12 +2099,12 @@ class HybridPIIMaskingAgent(BaseAgent):
                         next_text,
                         re.I,
                     ):
-                        logger.info(f"      ⏭ Skipped date pattern in address block: '{next_text}'")
+                        logger.info(f"       Skipped date pattern in address block: '{next_text}'")
                         continue
 
                 # Sadece yıl olan satırları atla
                     if re.match(r"^\s*\d{4}\s*$", next_text):
-                        logger.info(f"      ⏭ Skipped pure year in address block: '{next_text}'")
+                        logger.info(f"       Skipped pure year in address block: '{next_text}'")
                         continue
 
                     address_boxes.append(next_box)
@@ -2255,7 +2255,7 @@ class HybridPIIMaskingAgent(BaseAgent):
         if dt != "resume":
             return []
     
-        logger.info(f"🔍 Starting resume name detection")
+        logger.info(f" Starting resume name detection")
     
         if not ocr_boxes:
             return []
@@ -2329,7 +2329,7 @@ class HybridPIIMaskingAgent(BaseAgent):
             if same_line_candidates:
                 is_valid, combined_name = _is_name_like(same_line_candidates)
                 if is_valid:
-                    logger.info(f"   ✅ NAME found on SAME LINE: '{combined_name}'")
+                    logger.info(f"    NAME found on SAME LINE: '{combined_name}'")
 
                 # BBox hesapla
                     xs = [b.get("box", (0,0,0,0))[0] for b in same_line_candidates]
@@ -2342,10 +2342,10 @@ class HybridPIIMaskingAgent(BaseAgent):
                     mw = max(xes) - mx
                     mh = max(yes) - my
 
-                    logger.info(f"✅ RESUME NAME via NAME label detected: '{combined_name}' → bbox=({mx},{my},{mw},{mh})")
+                    logger.info(f" RESUME NAME via NAME label detected: '{combined_name}' → bbox=({mx},{my},{mw},{mh})")
                     return [(mx, my, mw, mh)]
 
-        # 🔥 2️⃣ AYNI SATIRDA YOKSA ALT SATIRA BAK (FIX: 1-3 satır altı, aynı sütun)
+        #  2️ AYNI SATIRDA YOKSA ALT SATIRA BAK (FIX: 1-3 satır altı, aynı sütun)
             below_candidates = []
             for k, b2 in enumerate(sorted_boxes):
                 if k <= i:  # Label'dan sonra gelen kutuları kontrol et
@@ -2368,7 +2368,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                 _, combined_name = _is_name_like([best])
             
                 bx, by, bw, bh = best.get("box", (0, 0, 0, 0))
-                logger.info(f"✅ RESUME NAME via NAME label (BELOW) detected: '{combined_name}' → bbox=({bx},{by},{bw},{bh})")
+                logger.info(f" RESUME NAME via NAME label (BELOW) detected: '{combined_name}' → bbox=({bx},{by},{bw},{bh})")
                 return [(bx, by, bw, bh)]
             # === SATIR BAZLI GRUPLAMA (line-level boxes) ===
         line_boxes = []
@@ -2430,19 +2430,19 @@ class HybridPIIMaskingAgent(BaseAgent):
     
     # === ADAY SEÇME STRATEJISI ===
     
-    # 1️⃣ ÇOK BÜYÜK FONTLU METINLER (avg'nin 1.8+ katı)
+    # 1️ ÇOK BÜYÜK FONTLU METINLER (avg'nin 1.8+ katı)
         very_large = [
             b for b in top_boxes 
             if b.get("box", (0,0,0,0))[3] > avg_height * 1.8
         ]
     
-    # 2️⃣ BÜYÜK FONTLU METINLER (avg'nin 1.3+ katı)
+    # 2️ BÜYÜK FONTLU METINLER (avg'nin 1.3+ katı)
         large_boxes = [
             b for b in top_boxes 
             if b.get("box", (0,0,0,0))[3] > avg_height * 1.3
         ]
     
-    # 3️⃣ ALTI ÇİZİLİ METINLER (underline tespiti)
+    # 3️ ALTI ÇİZİLİ METINLER (underline tespiti)
     # Altı çizili metin genelde hemen altında ince bir çizgi kutusu vardır
         underlined = []
         for i, box in enumerate(top_boxes):
@@ -2457,7 +2457,7 @@ class HybridPIIMaskingAgent(BaseAgent):
                     nh < 8 and  # Çok ince
                     nw > bw * 0.5):  # En az yarısı kadar geniş
                     underlined.append(box)
-                    logger.info(f"   🔍 Underlined detected: '{box.get('text')}'")
+                    logger.info(f"    Underlined detected: '{box.get('text')}'")
     
     # === ADAY HAVUZU ===
             # === ADAY HAVUZU ===
@@ -2510,34 +2510,34 @@ class HybridPIIMaskingAgent(BaseAgent):
         
             text_lower = text.lower()
         
-        # 1️⃣ Exclude pattern kontrolü
+        # 1️ Exclude pattern kontrolü
             if exclude_regex.search(text):
-                logger.info(f"     ❌ Excluded (company/doc keyword): '{text}'")
+                logger.info(f"      Excluded (company/doc keyword): '{text}'")
                 continue
         
-        # 2️⃣ İletişim bilgisi kontrolü
+        # 2️ İletişim bilgisi kontrolü
             if contact_regex.search(text):
-                logger.info(f"     ❌ Excluded (contact info): '{text}'")
+                logger.info(f"      Excluded (contact info): '{text}'")
                 continue
         
-        # 3️⃣ Tarih içeriyor mu?
+        # 3️ Tarih içeriyor mu?
             if date_regex.search(text):
-                logger.info(f"     ❌ Excluded (contains date): '{text}'")
+                logger.info(f"      Excluded (contains date): '{text}'")
                 continue
         
-        # 4️⃣ Kelime sayısı kontrolü (2-6 kelime arası)
+        # 4️ Kelime sayısı kontrolü (2-6 kelime arası)
             words = [w for w in text.split() if len(w) > 1]  # 1 harflik kelimeleri sayma
             word_count = len(words)
         
             if word_count < 2:
-                logger.info(f"     ❌ Excluded (too few words): '{text}'")
+                logger.info(f"      Excluded (too few words): '{text}'")
                 continue
         
             if word_count > 6:
-                logger.info(f"     ❌ Excluded (too many words): '{text}'")
+                logger.info(f"      Excluded (too many words): '{text}'")
                 continue
         
-        # 5️⃣ İSİM PATTERN KONTROLÜ
+        # 5️ İSİM PATTERN KONTROLÜ
         
         # Pattern A: Title Case (George Anthony Santisteban)
             title_case_count = sum(1 for w in words if len(w) > 1 and w[0].isupper())
@@ -2554,24 +2554,24 @@ class HybridPIIMaskingAgent(BaseAgent):
         
         # En az bir pattern'e uymalı
             if not (is_title_case or is_all_caps or has_comma or has_title):
-                logger.info(f"     ❌ Excluded (no name pattern): '{text}'")
+                logger.info(f"      Excluded (no name pattern): '{text}'")
                 continue
         
-        # 6️⃣ ÖZEL KARAKTER KONTROLÜ
+        # 6️ ÖZEL KARAKTER KONTROLÜ
         # Çok fazla noktalama varsa şüpheli
             special_chars = sum(1 for c in text if c in "()[]{}@#$%^&*+=<>/\\|")
             if special_chars > 2:
-                logger.info(f"     ❌ Excluded (too many special chars): '{text}'")
+                logger.info(f"      Excluded (too many special chars): '{text}'")
                 continue
         
-        # 7️⃣ SAYISAL İÇERİK KONTROLÜ
+        # 7️ SAYISAL İÇERİK KONTROLÜ
         # İsimde sayı olmamalı (unvanlar hariç)
             digits = sum(1 for c in text if c.isdigit())
             if digits > 0 and not has_title:  # Unvan varsa (M.D.) sayıya izin ver
-                logger.info(f"     ❌ Excluded (contains digits): '{text}'")
+                logger.info(f"      Excluded (contains digits): '{text}'")
                 continue
         
-        # ✅ TÜM FİLTRELERİ GEÇTİ
+        #  TÜM FİLTRELERİ GEÇTİ
             score = 0
         
         # Scoring sistemi
@@ -2584,12 +2584,12 @@ class HybridPIIMaskingAgent(BaseAgent):
             if box in large_boxes: score += 1
         
             name_candidates.append((box, score))
-            logger.info(f"   ✅ NAME CANDIDATE (score={score}): '{text}'")
+            logger.info(f"    NAME CANDIDATE (score={score}): '{text}'")
     
     # === EN İYİ ADAYI SEÇ ===
     
         if not name_candidates:
-            logger.info("❌ No name detected")
+            logger.info(" No name detected")
             return []
     
     # En yüksek skorlu adayı seç
@@ -2599,7 +2599,7 @@ class HybridPIIMaskingAgent(BaseAgent):
     
         x, y, w, h = best_box.get("box", (0, 0, 0, 0))
     
-        logger.info(f"✅ RESUME NAME DETECTED (score={best_score})")
+        logger.info(f" RESUME NAME DETECTED (score={best_score})")
         logger.info(f"   Text: '{best_box.get('text')}'")
         logger.info(f"   BBox: ({x},{y},{w},{h})")
     
@@ -4437,12 +4437,12 @@ class CoordinatorAgent(BaseAgent):
     def __init__(self, ocr_default_backend: str = "tesseract"):
         super().__init__("coordinator")
         self.ocr_agent = OCRAgent(default_backend=ocr_default_backend)
-        self.masking_agent = HybridPIIMaskingAgent()              # ← EKLENDİ
+        self.masking_agent = HybridPIIMaskingAgent()             
         self.normalization_agent = TextNormalizationAgent()
         self.classification_agent = ClassificationAgent()
 
         self.ocr_agent.set_coordinator(self)
-        self.masking_agent.set_coordinator(self)         # ← EKLENDİ
+        self.masking_agent.set_coordinator(self)         
         self.normalization_agent.set_coordinator(self)
         self.classification_agent.set_coordinator(self)
 
@@ -5368,7 +5368,7 @@ class TestEngine:
             logger.info(f"[{i}/{total}] Testing: {sample['file_name']}")
             r = await self.run_single_test(sample)
             self.results.append(r)
-            status = "" if r["predicted_type"] not in ("ERROR", "SKIPPED") and r.get("correct") else "❌"
+            status = "" if r["predicted_type"] not in ("ERROR", "SKIPPED") and r.get("correct") else "X"
             logger.info(f"{status} {sample['true_type']} -> {r['predicted_type']}\n")
 
         self._save_results()
@@ -5575,7 +5575,7 @@ class TestEngine:
         excel_file = f"masking_report_{timestamp}.xlsx"
     
     # ========================================
-    # 1️⃣ DOSYA BAZINDA DETAY
+    # 1️ DOSYA BAZINDA DETAY
     # ========================================
         file_details = []
     
@@ -5594,7 +5594,7 @@ class TestEngine:
                 "Hassas Veri?": "EVET" if total_pii > 0 else "HAYIR",
             }
         
-        # Her PII türü için ayrı kolon
+        
             pii_types = ["email", "phone", "credit_card", "iban", "tax_id", 
                         "signature", "address", "person", "date"]
         
@@ -5606,7 +5606,7 @@ class TestEngine:
         df_files = pd.DataFrame(file_details)
     
     # ========================================
-    # 2️⃣ ÖZET İSTATİSTİKLER
+    # 2️ ÖZET İSTATİSTİKLER
     # ========================================
         total_files = len(df_files)
         files_with_pii = df_files[df_files["Hassas Veri?"] == "EVET"].shape[0]
@@ -5629,7 +5629,7 @@ class TestEngine:
         df_summary = pd.DataFrame(pii_summary)
     
     # ========================================
-    # 3️⃣ BELGE TİPİNE GÖRE DAĞILIM
+    # 3️ BELGE TİPİNE GÖRE DAĞILIM
     # ========================================
         doc_type_summary = []
     
@@ -5656,7 +5656,7 @@ class TestEngine:
         df_doc_types = pd.DataFrame(doc_type_summary)
     
     # ========================================
-    # 4️⃣ GENEL ÖZET
+    # 4️ GENEL ÖZET
     # ========================================
         general_summary = pd.DataFrame([{
            "Metrik": "Toplam İşlenen Dosya",
@@ -5673,7 +5673,7 @@ class TestEngine:
         }])
     
     # ========================================
-    # 5️⃣ EXCEL'E YAZDIR
+    # 5️ EXCEL'E YAZDIR
     # ========================================
         with pd.ExcelWriter(excel_file, engine='openpyxl') as writer:
         # Sheet 1: Genel Özet
@@ -5692,24 +5692,24 @@ class TestEngine:
     
     # Console özeti
         print(f"\n{'='*80}")
-        print(f"📊 MASKING REPORT SUMMARY")
+        print(f" MASKING REPORT SUMMARY")
         print(f"{'='*80}")
-        print(f"\n✅ Toplam Dosya: {total_files}")
-        print(f"🔴 Hassas Veri Bulunan: {files_with_pii} (%{files_with_pii/total_files*100:.1f})")
-        print(f"✅ Temiz Dosya: {total_files - files_with_pii}")
-        print(f"🎯 Toplam Maskelenen PII: {int(df_files['Toplam PII'].sum())}")
+        print(f"\n Toplam Dosya: {total_files}")
+        print(f" Hassas Veri Bulunan: {files_with_pii} (%{files_with_pii/total_files*100:.1f})")
+        print(f" Temiz Dosya: {total_files - files_with_pii}")
+        print(f" Toplam Maskelenen PII: {int(df_files['Toplam PII'].sum())}")
     
-        print(f"\n📋 En Çok Bulunan PII Türleri:")
+        print(f"\n En Çok Bulunan PII Türleri:")
         top_5 = df_summary.nlargest(5, "Toplam Adet")
         for _, row in top_5.iterrows():
             print(f"  • {row['PII Türü']:15s}: {row['Toplam Adet']:3d} adet ({row['Yüzde (%)']})")
     
-        print(f"\n📁 Belge Tiplerine Göre:")
+        print(f"\n Belge Tiplerine Göre:")
         for _, row in df_doc_types.iterrows():
             print(f"  • {row['Belge Tipi']:15s}: {row['Toplam PII Sayısı']:3d} PII "
                 f"(En çok: {row['En Çok Bulunan PII']} - {row['Miktarı']} adet)")
     
-        print(f"\n💾 Detaylı rapor kaydedildi: {excel_file}")
+        print(f"\n Detaylı rapor kaydedildi: {excel_file}")
         print(f"{'='*80}\n")
     
         return excel_file
@@ -5726,9 +5726,9 @@ async def main(parallel: bool = True):
     print("\n" + "=" * 80)
     print("MULTI-AGENT DOCUMENT PROCESSING - v3.3 FINE-TUNED (w/ FIXES & MASKING)")
     if parallel:
-        print("MODE: PARALLEL PROCESSING ⚡")
+        print("MODE: PARALLEL PROCESSING ")
     else:
-        print("MODE: SEQUENTIAL PROCESSING 🐢")
+        print("MODE: SEQUENTIAL PROCESSING ")
     print("=" * 80)
     print("Document Types: email, form, invoice, letter, news_article, resume, receipt")
     print("A2A Protocol: OCR → Masking → Normalization → Classification")
