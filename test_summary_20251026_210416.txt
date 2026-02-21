@@ -1,0 +1,43 @@
+============================================================
+DOCUMENT CLASSIFICATION TEST REPORT - v3.3 FINE-TUNED (WITH FIXES)
+============================================================
+
+Test Date: 2025-10-26 21:04:16
+Total Samples (evaluated): 108
+Overall Accuracy: 89.81%
+
+------------------------------------------------------------
+PER-CLASS METRICS
+------------------------------------------------------------
+              precision    recall  f1-score   support
+
+       email       0.93      0.87      0.90        15
+        form       1.00      0.93      0.97        15
+     invoice       1.00      0.87      0.93        15
+      letter       1.00      0.87      0.93        15
+news_article       1.00      0.73      0.85        15
+       other       0.00      0.00      0.00         0
+     receipt       0.82      1.00      0.90        18
+      resume       1.00      1.00      1.00        15
+
+    accuracy                           0.90       108
+   macro avg       0.84      0.78      0.81       108
+weighted avg       0.96      0.90      0.92       108
+
+------------------------------------------------------------
+CONFIDENCE STATISTICS
+------------------------------------------------------------
+Mean: 72.91%
+Median: 79.00%
+Std Dev: 18.61%
+
+------------------------------------------------------------
+COMMON MISCLASSIFICATIONS
+------------------------------------------------------------
+news_article    -> other          : 3 times
+letter          -> other          : 2 times
+email           -> receipt        : 2 times
+invoice         -> other          : 1 times
+form            -> email          : 1 times
+invoice         -> receipt        : 1 times
+news_article    -> receipt        : 1 times

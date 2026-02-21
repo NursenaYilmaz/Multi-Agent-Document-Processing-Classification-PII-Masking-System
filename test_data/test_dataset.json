@@ -1,0 +1,662 @@
+[
+  {
+    "file_name": "0001477447.png",
+    "file_path": "test_data\\email\\0001477447.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "0011838740.png",
+    "file_path": "test_data\\email\\0011838740.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "12503820.png",
+    "file_path": "test_data\\email\\12503820.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71108803.png",
+    "file_path": "test_data\\email\\71108803.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71116905.png",
+    "file_path": "test_data\\email\\71116905.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71130068.png",
+    "file_path": "test_data\\email\\71130068.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71505961.png",
+    "file_path": "test_data\\email\\71505961.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71941396.png",
+    "file_path": "test_data\\email\\71941396.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "71950595.png",
+    "file_path": "test_data\\email\\71950595.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81838836.png",
+    "file_path": "test_data\\email\\81838836.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81839536.png",
+    "file_path": "test_data\\email\\81839536.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81857919.png",
+    "file_path": "test_data\\email\\81857919.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81858179.png",
+    "file_path": "test_data\\email\\81858179.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81860433.png",
+    "file_path": "test_data\\email\\81860433.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "81861751.png",
+    "file_path": "test_data\\email\\81861751.png",
+    "true_type": "email",
+    "notes": ""
+  },
+  {
+    "file_name": "0000989556.png",
+    "file_path": "test_data\\form\\0000989556.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "0000990274.png",
+    "file_path": "test_data\\form\\0000990274.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "00040534.png",
+    "file_path": "test_data\\form\\00040534.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "00070353.png",
+    "file_path": "test_data\\form\\00070353.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "00866042.png",
+    "file_path": "test_data\\form\\00866042.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "01073843.png",
+    "file_path": "test_data\\form\\01073843.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "2505373057.png",
+    "file_path": "test_data\\form\\2505373057.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "520954320-4320.png",
+    "file_path": "test_data\\form\\520954320-4320.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "91939637.png",
+    "file_path": "test_data\\form\\91939637.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "91974562.png",
+    "file_path": "test_data\\form\\91974562.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "92094751.png",
+    "file_path": "test_data\\form\\92094751.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "92586242.png",
+    "file_path": "test_data\\form\\92586242.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "92657391.png",
+    "file_path": "test_data\\form\\92657391.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "93329540.png",
+    "file_path": "test_data\\form\\93329540.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "93380187.png",
+    "file_path": "test_data\\form\\93380187.png",
+    "true_type": "form",
+    "notes": ""
+  },
+  {
+    "file_name": "batch1-0002.jpg",
+    "file_path": "test_data\\invoice\\batch1-0002.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "batch1-0029.jpg",
+    "file_path": "test_data\\invoice\\batch1-0029.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "batch2-0003.jpg",
+    "file_path": "test_data\\invoice\\batch2-0003.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "batch2-0013.jpg",
+    "file_path": "test_data\\invoice\\batch2-0013.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "batch2-0501.jpg",
+    "file_path": "test_data\\invoice\\batch2-0501.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "batch2-1075.jpg",
+    "file_path": "test_data\\invoice\\batch2-1075.jpg",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000037007.png",
+    "file_path": "test_data\\invoice\\0000037007.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000037010.png",
+    "file_path": "test_data\\invoice\\0000037010.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000102823.png",
+    "file_path": "test_data\\invoice\\0000102823.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000137558.png",
+    "file_path": "test_data\\invoice\\0000137558.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000226465.png",
+    "file_path": "test_data\\invoice\\0000226465.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0060085469.png",
+    "file_path": "test_data\\invoice\\0060085469.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "00920249.png",
+    "file_path": "test_data\\invoice\\00920249.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "11244511.png",
+    "file_path": "test_data\\invoice\\11244511.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "11314804.png",
+    "file_path": "test_data\\invoice\\11314804.png",
+    "true_type": "invoice",
+    "notes": ""
+  },
+  {
+    "file_name": "0000000700.png",
+    "file_path": "test_data\\letter\\0000000700.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000001585.png",
+    "file_path": "test_data\\letter\\0000001585.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000004665.png",
+    "file_path": "test_data\\letter\\0000004665.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000005930.png",
+    "file_path": "test_data\\letter\\0000005930.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000038945.png",
+    "file_path": "test_data\\letter\\0000038945.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000049717.png",
+    "file_path": "test_data\\letter\\0000049717.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000073544.png",
+    "file_path": "test_data\\letter\\0000073544.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000120178.png",
+    "file_path": "test_data\\letter\\0000120178.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000128669.png",
+    "file_path": "test_data\\letter\\0000128669.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000158935.png",
+    "file_path": "test_data\\letter\\0000158935.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "0000178546.png",
+    "file_path": "test_data\\letter\\0000178546.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "00071215_00071216.png",
+    "file_path": "test_data\\letter\\00071215_00071216.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "50020207.png",
+    "file_path": "test_data\\letter\\50020207.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "86018633.png",
+    "file_path": "test_data\\letter\\86018633.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "87536366.png",
+    "file_path": "test_data\\letter\\87536366.png",
+    "true_type": "letter",
+    "notes": ""
+  },
+  {
+    "file_name": "EqualRightsAmendment_featured_rs.jpg",
+    "file_path": "test_data\\news_article\\EqualRightsAmendment_featured_rs.jpg",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "ER Ghanaian Times news article 4 May 2012.jpg",
+    "file_path": "test_data\\news_article\\ER Ghanaian Times news article 4 May 2012.jpg",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000009914.png",
+    "file_path": "test_data\\news_article\\0000009914.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000023692.png",
+    "file_path": "test_data\\news_article\\0000023692.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000038038.png",
+    "file_path": "test_data\\news_article\\0000038038.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000111065.png",
+    "file_path": "test_data\\news_article\\0000111065.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000300532.png",
+    "file_path": "test_data\\news_article\\0000300532.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000326649.png",
+    "file_path": "test_data\\news_article\\0000326649.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000326768.png",
+    "file_path": "test_data\\news_article\\0000326768.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000326773.png",
+    "file_path": "test_data\\news_article\\0000326773.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "00135559_00135566.png",
+    "file_path": "test_data\\news_article\\00135559_00135566.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "2046105716.png",
+    "file_path": "test_data\\news_article\\2046105716.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "91589435_91589436.png",
+    "file_path": "test_data\\news_article\\91589435_91589436.png",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "07STATE-tear-articleLarge.webp",
+    "file_path": "test_data\\news_article\\07STATE-tear-articleLarge.webp",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "5b967f8c959f3432008b5bbb.webp",
+    "file_path": "test_data\\news_article\\5b967f8c959f3432008b5bbb.webp",
+    "true_type": "news_article",
+    "notes": ""
+  },
+  {
+    "file_name": "0000134646.png",
+    "file_path": "test_data\\resume\\0000134646.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "0000153376.png",
+    "file_path": "test_data\\resume\\0000153376.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "0000157402.png",
+    "file_path": "test_data\\resume\\0000157402.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "00071736_00071737.png",
+    "file_path": "test_data\\resume\\00071736_00071737.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "0012910717.png",
+    "file_path": "test_data\\resume\\0012910717.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "10197033_10197034.png",
+    "file_path": "test_data\\resume\\10197033_10197034.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "10227398.png",
+    "file_path": "test_data\\resume\\10227398.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "40004573-4574.png",
+    "file_path": "test_data\\resume\\40004573-4574.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "40021373-1374.png",
+    "file_path": "test_data\\resume\\40021373-1374.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "40029995-9996.png",
+    "file_path": "test_data\\resume\\40029995-9996.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "40031766-1767.png",
+    "file_path": "test_data\\resume\\40031766-1767.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50142370-2371.png",
+    "file_path": "test_data\\resume\\50142370-2371.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50150808-0811.png",
+    "file_path": "test_data\\resume\\50150808-0811.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50229131-9132.png",
+    "file_path": "test_data\\resume\\50229131-9132.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50252411-2412.png",
+    "file_path": "test_data\\resume\\50252411-2412.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50283776-3778.png",
+    "file_path": "test_data\\resume\\50283776-3778.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "50462318-2324.png",
+    "file_path": "test_data\\resume\\50462318-2324.png",
+    "true_type": "resume",
+    "notes": ""
+  },
+  {
+    "file_name": "1045-receipt.jpg",
+    "file_path": "test_data\\receipt\\1045-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1048-receipt.jpg",
+    "file_path": "test_data\\receipt\\1048-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1049-receipt.jpg",
+    "file_path": "test_data\\receipt\\1049-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1050-receipt.jpg",
+    "file_path": "test_data\\receipt\\1050-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1051-receipt.jpg",
+    "file_path": "test_data\\receipt\\1051-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1052-receipt.jpg",
+    "file_path": "test_data\\receipt\\1052-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1053-receipt.jpg",
+    "file_path": "test_data\\receipt\\1053-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1054-receipt.jpg",
+    "file_path": "test_data\\receipt\\1054-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "1056-receipt.jpg",
+    "file_path": "test_data\\receipt\\1056-receipt.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X00016469670.jpg",
+    "file_path": "test_data\\receipt\\X00016469670.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X00016469671.jpg",
+    "file_path": "test_data\\receipt\\X00016469671.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005230605.jpg",
+    "file_path": "test_data\\receipt\\X51005230605.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005230616.jpg",
+    "file_path": "test_data\\receipt\\X51005230616.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005230659.jpg",
+    "file_path": "test_data\\receipt\\X51005230659.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005268275.jpg",
+    "file_path": "test_data\\receipt\\X51005268275.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005301666.jpg",
+    "file_path": "test_data\\receipt\\X51005301666.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005337867.jpg",
+    "file_path": "test_data\\receipt\\X51005337867.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  },
+  {
+    "file_name": "X51005337877.jpg",
+    "file_path": "test_data\\receipt\\X51005337877.jpg",
+    "true_type": "receipt",
+    "notes": ""
+  }
+]
